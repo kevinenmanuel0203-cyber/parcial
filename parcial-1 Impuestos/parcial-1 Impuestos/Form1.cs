@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,119 +12,287 @@ namespace parcial_1_Impuestos
 {
     public partial class Form1 : Form
     {
-        private const double LIMITE_BASE = 1000.0;
-        private const double AJUSTE_RANGO = 1000.01;
-        private const double TASA_ADICIONAL = 3.0;
-        private const double VALOR_FIJO = 3.0;
-
         public Form1()
         {
             InitializeComponent();
+        }
+        Conexion_base_datos objConexion = new Conexion_base_datos();
+        DataSet objDs = new DataSet();
+        DataTable objDt = new DataTable();
+        public int posicion = 0;
+        public string accion = "nuevo";
 
-            // El resultado no debe poder editarse manualmente
-            txtImpuestoPagar.ReadOnly = true;
+        private void actualizarDs()
+        {
+            objDs.Clear();
+            objDs = objConexion.obtenerDatos();
+            objDt = objDs.Tables["alumnos"];
+
+            objDt.PrimaryKey = new DataColumn[] { objDt.Columns["idAlumnos"] };
+
+
+            configurarColumnasGrid();
+
+            grdAlumnos.DataSource = objDt.DefaultView;
+            mostrarDatos();
         }
 
-        // BOTÓN CALCULAR
-        private void btnCalcular_Click(object sender, EventArgs e)
+        private void mostrarDatos()
         {
-            if (!ObtenerMontoValido(out double montoActividad))
-                return;
-
-            double impuestoCalculado = CalcularImpuesto(montoActividad);
-
-            txtImpuestoPagar.Text = impuestoCalculado.ToString("C2", CultureInfo.GetCultureInfo("es-SV"));
+            throw new NotImplementedException();
         }
 
-        // BOTÓN VER CÁLCULO
-        private void btnVerDesarrollo_Click(object sender, EventArgs e)
+        private void configurarColumnasGrid()
         {
-            if (!ObtenerMontoValido(out double montoActividad))
-                return;
-
-            if (montoActividad <= LIMITE_BASE)
+            try
             {
-                MessageBox.Show(
-                    $"Actividad económica: {montoActividad:0.00}\n\n" +
-                    $"Al ser menor o igual a {LIMITE_BASE:0.00}, se aplica valor fijo.\n\n" +
-                    $"IMPUESTO A PAGAR: ${VALOR_FIJO:0.00}",
-                    "Detalle del cálculo",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-                return;
+
+                if (grdAlumnos.Columns.Contains("idAlumnos"))
+                    grdAlumnos.Columns["idAlumnos"].DataPropertyName = "idAlumnos";
+
+                if (grdAlumnos.Columns.Contains("código"))
+                    grdAlumnos.Columns["código"].DataPropertyName = "código";
+                else if (grdAlumnos.Columns.Contains("codigo"))
+                    grdAlumnos.Columns["codigo"].DataPropertyName = "código";
+
+                if (grdAlumnos.Columns.Contains("nombre"))
+                    grdAlumnos.Columns["nombre"].DataPropertyName = "nombre";
+
+                if (grdAlumnos.Columns.Contains("direccion"))
+                    grdAlumnos.Columns["direccion"].DataPropertyName = "direccion";
+
+                if (grdAlumnos.Columns.Contains("telefono"))
+                    grdAlumnos.Columns["telefono"].DataPropertyName = "telefono";
             }
-
-            double excedente = montoActividad - AJUSTE_RANGO;
-            double impuestoCalculado = CalcularImpuesto(montoActividad);
-
-            string mensaje =
-                "Cálculo detallado del impuesto\n\n" +
-                $"Ejemplo: una actividad económica de ${montoActividad:0.00} " +
-                $"genera un pago de ${impuestoCalculado:0.00}\n\n" +
-                $"Paso 1 (excedente): {montoActividad:0.00} - {AJUSTE_RANGO:0.00} = {excedente:0.00}\n" +
-                $"Paso 2 (fórmula): ({excedente:0.00} / 1000) * {TASA_ADICIONAL:0.00} + {VALOR_FIJO:0.00} = ${impuestoCalculado:0.00}";
-
-            MessageBox.Show(
-                mensaje,
-                "Resultado del cálculo",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information);
-        }
-
-        // Valida el texto ingresado y lo convierte a monto
-        private bool ObtenerMontoValido(out double monto)
-        {
-            monto = 0;
-
-            if (!double.TryParse(txtMontoActividad.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out monto))
+            catch
             {
-                MessageBox.Show(
-                    "Ingrese un monto numérico válido.",
-                    "Dato inválido",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return false;
-            }
 
-            if (monto < 0)
+            }
+        }
+
+        private void MostrarDatos()
+        {
+            if (objDt.Rows.Count > 0 && posicion >= 0 && posicion < objDt.Rows.Count)
             {
-                MessageBox.Show(
-                    "El monto de la actividad económica no puede ser negativo.",
-                    "Dato inválido",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-                return false;
+                idAlumno.Text = objDt.Rows[posicion]["idAlumnos"].ToString();
+                txtCodigoAlumno.Text = objDt.Rows[posicion]["código"].ToString();
+                txtNombreAlumno.Text = objDt.Rows[posicion]["nombre"].ToString();
+                txtDireccionAlumno.Text = objDt.Rows[posicion]["direccion"].ToString();
+                txtTelefonoAlumno.Text = objDt.Rows[posicion]["telefono"].ToString();
+
+                lblnRegistrosAlumno.Text = (posicion + 1) + " de " + objDt.Rows.Count;
             }
-
-            return true;
         }
 
-        // Aplica la fórmula del impuesto según el rango del monto
-        private double CalcularImpuesto(double monto)
+        private void Form1_Load(object sender, EventArgs e)
         {
-            if (monto <= LIMITE_BASE)
-                return VALOR_FIJO;
-
-            double excedente = monto - AJUSTE_RANGO;
-            return (excedente / 1000) * TASA_ADICIONAL + VALOR_FIJO;
+            actualizarDs();
         }
 
-        // EVENTOS DEL DISEÑADOR (sin lógica)
-        private void lblMontoActividad_Click(object sender, EventArgs e) { }
-        private void txtMontoActividad_TextChanged(object sender, EventArgs e) { }
-        private void txtImpuestoPagar_TextChanged(object sender, EventArgs e) { }
-
-        private void button2_Click(object sender, EventArgs e)
+        private void btnSiguienteAlumno_Click(object sender, EventArgs e)
         {
-            txtMontoActividad.Clear();
-            txtImpuestoPagar.Clear();
-
-            txtMontoActividad.Focus();
+            if (posicion < objDt.Rows.Count - 1)
+            {
+                posicion++;
+                mostrarDatos();
+            }
+            else
+            {
+                MessageBox.Show("Estas en el ultimo registro.", "Navegacion de Alumnos", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnAnteriorAlumno_Click(object sender, EventArgs e)
         {
-            Application.Exit();
+            if (posicion > 0)
+            {
+                posicion--;
+                mostrarDatos();
+            }
+            else
+            {
+                MessageBox.Show("Estas en el primer registro.", "Navegacion de Alumnos", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void btnUltimoAlumno_Click(object sender, EventArgs e)
+        {
+            if (objDt.Rows.Count > 0)
+            {
+                posicion = objDt.Rows.Count - 1;
+                mostrarDatos();
+            }
+        }
+
+        private void btnPrimeroAlumno_Click(object sender, EventArgs e)
+        {
+            if (objDt.Rows.Count > 0)
+            {
+                posicion = 0;
+                mostrarDatos();
+            }
+        }
+
+        private void estadoControles(Boolean estado)
+        {
+            grbDatosAlumno.Enabled = estado;
+            grbNavegacionAlumno.Enabled = !estado;
+            btnEliminarAlumno.Enabled = !estado;
+        }
+
+        private void limpiarControles()
+        {
+            idAlumno.Text = "";
+            txtCodigoAlumno.Text = "";
+            txtNombreAlumno.Text = "";
+            txtDireccionAlumno.Text = "";
+            txtTelefonoAlumno.Text = "";
+        }
+
+        private void btnAgregarAlumno_Click(object sender, EventArgs e)
+        {
+            if (btnAgregarAlumno.Text == "Nuevo")
+            {
+                btnAgregarAlumno.Text = "Guardar";
+                btnModificarAlumno.Text = "Cancelar";
+                estadoControles(true);
+                accion = "nuevo";
+                limpiarControles();
+            }
+            else
+            { // Guardar
+                String[] alumnos = {
+                    idAlumno.Text, txtCodigoAlumno.Text, txtNombreAlumno.Text, txtDireccionAlumno.Text,
+                    txtTelefonoAlumno.Text
+                };
+                String respuesta = objConexion.administrarDatosAlumnos(alumnos, accion);
+                if (respuesta != "1")
+                {
+                    MessageBox.Show(respuesta, "Error al guardar alumnos.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    estadoControles(false);
+                    btnAgregarAlumno.Text = "Nuevo";
+                    btnModificarAlumno.Text = "Modificar";
+                    actualizarDs();
+                }
+            }
+        }
+
+        private void btnModificarAlumno_Click(object sender, EventArgs e)
+        {
+            if (btnModificarAlumno.Text == "Modificar")
+            {
+                btnAgregarAlumno.Text = "Guardar";
+                btnModificarAlumno.Text = "Cancelar";
+                estadoControles(true);
+                accion = "modificar";
+            }
+            else
+            { // Cancelar
+                mostrarDatos();
+                estadoControles(false);
+                btnAgregarAlumno.Text = "Nuevo";
+                btnModificarAlumno.Text = "Modificar";
+            }
+        }
+
+        private void btnEliminarAlumno_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Esta seguro de eliminar a " + txtNombreAlumno.Text,
+                "Eliminando alumnos", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                String respuesta = objConexion.administrarDatosAlumnos(
+                    new String[] { idAlumno.Text, "", "", "", "" }, "eliminar"
+                );
+                if (respuesta != "1")
+                {
+                    MessageBox.Show(respuesta, "Error al eliminar alumnos.", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    posicion = 0;
+                    actualizarDs();
+                }
+            }
+        }
+
+        private void txtBuscarAlumnos_KeyUp(object sender, KeyEventArgs e)
+        {
+            try
+            {
+                filtrarDatos(txtBuscarAlumnos.Text);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void filtrarDatos(String valor)
+        {
+            try
+            {
+                DataView objDv = objDt.DefaultView;
+
+
+                objDv.RowFilter = "código like '%" + valor + "%' OR nombre like '%" + valor + "%'";
+
+                grdAlumnos.DataSource = objDv;
+                seleccionarAlumno();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+
+        private void seleccionarAlumno()
+        {
+            try
+            {
+                if (grdAlumnos.CurrentRow == null)
+                {
+                    return;
+                }
+
+                string id = "";
+
+                if (grdAlumnos.Columns.Contains("idAlumnos") && grdAlumnos.CurrentRow.Cells["idAlumnos"].Value != null)
+                {
+                    id = grdAlumnos.CurrentRow.Cells["idAlumnos"].Value.ToString();
+                }
+                else if (grdAlumnos.CurrentRow.Cells[0].Value != null)
+                {
+                    id = grdAlumnos.CurrentRow.Cells[0].Value.ToString();
+                }
+
+                if (!string.IsNullOrEmpty(id))
+                {
+                    DataRow dr = objDt.Rows.Find(id);
+                    if (dr != null)
+                    {
+                        posicion = objDt.Rows.IndexOf(dr);
+                        mostrarDatos();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+        }
+
+        private void grdAlumnos_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            seleccionarAlumno();
+        }
+
+        private void grbDatosAlumno_Enter(object sender, EventArgs e)
+        {
+
         }
     }
 }
+    

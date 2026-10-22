@@ -1,0 +1,14 @@
+C:\Users\kev\Desktopparcial\parcial-1 Impuestos\parcial-1 Impuestos\obj\Debug\parcial-2.csproj.AssemblyReference.cache
+C:\Users\kev\Desktopparcial\parcial-1 Impuestos\parcial-1 Impuestos\obj\Debug\parcial_1_Impuestos.Form1.resources
+C:\Users\kev\Desktopparcial\parcial-1 Impuestos\parcial-1 Impuestos\obj\Debug\parcial_1_Impuestos.Frm_login.resources
+C:\Users\kev\Desktopparcial\parcial-1 Impuestos\parcial-1 Impuestos\obj\Debug\parcial_1_Impuestos.Properties.Resources.resources
+C:\Users\kev\Desktopparcial\parcial-1 Impuestos\parcial-1 Impuestos\obj\Debug\parcial-2.csproj.GenerateResource.cache
+C:\Users\kev\Desktopparcial\parcial-1 Impuestos\parcial-1 Impuestos\obj\Debug\parcial-2.csproj.CoreCompileInputs.cache
+C:\Users\kev\Desktopparcial\parcial-1 Impuestos\parcial-1 Impuestos\obj\Debug\parcial-1 Impuestos.exe
+C:\Users\kev\Desktopparcial\parcial-1 Impuestos\parcial-1 Impuestos\obj\Debug\parcial-1 Impuestos.pdb
+C:\Users\kev\Desktopparcial\parcial-1 Impuestos\parcial-1 Impuestos\obj\Debug\parcial_1_Impuestos.Frm_usuario.resources
+C:\Users\kev\Desktopparcial\parcial-1 Impuestos\parcial-1 Impuestos\bin\Debug\usuarios_usss075226.mdf
+C:\Users\kev\Desktopparcial\parcial-1 Impuestos\parcial-1 Impuestos\bin\Debug\usuarios_usss075226_log.ldf
+C:\Users\kev\Desktopparcial\parcial-1 Impuestos\parcial-1 Impuestos\bin\Debug\parcial-1 Impuestos.exe.config
+C:\Users\kev\Desktopparcial\parcial-1 Impuestos\parcial-1 Impuestos\bin\Debug\parcial-1 Impuestos.exe
+C:\Users\kev\Desktopparcial\parcial-1 Impuestos\parcial-1 Impuestos\bin\Debug\parcial-1 Impuestos.pdb
